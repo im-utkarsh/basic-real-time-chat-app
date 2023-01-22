@@ -1,4 +1,7 @@
-const io = require("socket.io")(3000, {
+const http = require("http");
+const port = process.env.PORT || 3000;
+const server = http.createServer();
+const io = require("socket.io")(server, {
     cors: {
         origin: "http://127.0.0.1:5500",
         methods: ["GET", "POST"],
@@ -8,7 +11,6 @@ const io = require("socket.io")(3000, {
 const users = {};
 
 io.on("connection", (socket) => {
-    console.log("new user connected");
     socket.on("new-user", (name) => {
         users[socket.id] = name;
         socket.broadcast.emit("user-connected", name);
@@ -25,4 +27,8 @@ io.on("connection", (socket) => {
         delete users[socket.id];
         io.emit("user-count-change", Object.keys(users).length);
     });
+});
+
+server.listen(port, () => {
+    console.log(`Working on ${port}`);
 });
