@@ -1,0 +1,14 @@
+{
+  "name": "real-time-chat-app",
+  "version": "1.0.0",
+  "description": "Basic real time chat app with socket.io",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon server.js"
+  },
+  "author": "Utkarsh", 
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.5.4"
+  }
+}
