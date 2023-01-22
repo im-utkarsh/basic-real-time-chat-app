@@ -4,7 +4,7 @@
   "description": "Basic real time chat app with socket.io",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js"
+    "devStart": "node server.js"
   },
   "author": "Utkarsh", 
   "license": "ISC",
