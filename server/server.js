@@ -1,7 +1,13 @@
-const http = require("http");
+import { createAvatar } from "@dicebear/core";
+import { botttsNeutral } from "@dicebear/collection";
+import { createServer } from "http";
+import { Server } from "socket.io";
+
 const port = process.env.PORT || 3000;
-const server = http.createServer();
-const io = require("socket.io")(server, {
+
+const httpServer = createServer();
+
+const io = new Server(httpServer, {
     cors: {
         origin: "http://127.0.0.1:5500",
         methods: ["GET", "POST"],
@@ -12,8 +18,16 @@ const users = {};
 
 io.on("connection", (socket) => {
     socket.on("new-user", (name) => {
-        users[socket.id] = name;
-        socket.broadcast.emit("user-connected", name);
+        const avatar = createAvatar(botttsNeutral, {
+            seed: socket.id,
+            radius: 50,
+            size: 32,
+            backgroundType: ["gradientLinear", "solid"],
+            backgroundRotation: [0, 360],
+        });
+        let obj = { name: name, avatar: avatar.toString() };
+        users[socket.id] = { obj };
+        socket.broadcast.emit("user-connected", obj);
         io.emit("user-count-change", Object.keys(users).length);
     });
     socket.on("send-chat-message", (message) => {
@@ -29,6 +43,6 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(port, () => {
+httpServer.listen(port, () => {
     console.log(`Working on ${port}`);
 });

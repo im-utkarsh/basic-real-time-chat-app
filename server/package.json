@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "Basic real time chat app with socket.io",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "start": "node server.js",
         "devstart": "nodemon server.js"
@@ -10,6 +11,8 @@
     "author": "Utkarsh",
     "license": "ISC",
     "dependencies": {
+        "@dicebear/collection": "^5.1.4",
+        "@dicebear/core": "^5.1.4",
         "socket.io": "^4.5.4"
     }
 }
