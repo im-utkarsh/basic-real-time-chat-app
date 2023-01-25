@@ -1,6 +1,6 @@
-// const socket = io("https://basic-real-time-chat-app-production.up.railway.app");
-const socket = io("http://localhost:3000");
-const numUsers = document.querySelector(".num-users");
+const socket = io("https://basic-real-time-chat-app-production.up.railway.app");
+// const socket = io("http://localhost:3000");
+const numUsers = document.querySelector(".num-users span");
 const container = document.querySelector(".container");
 const avatar = document.querySelector(".avatar");
 const sendContainer = document.getElementById("send-container");
@@ -9,11 +9,27 @@ const submitBtn = document.querySelector(".submit");
 const messageTemplate = document.querySelector(".message-template").content;
 const alertTemplate = document.querySelector(".alert-template").content;
 
-const keys = {};
+let shiftPressed = false;
 let myAvatar;
 let myColor = null;
+let userName = prompt("Please enter your name:");
 
-const userName = prompt("Please enter your name:");
+while (true) {
+    const re = /^[a-zA-Z]([a-zA-Z0-9]|([_\.-](?![_\.-])))+[a-zA-Z0-9]$/gm;
+    if (
+        userName &&
+        re.test(userName) &&
+        userName.length > 4 &&
+        userName.length <= 20
+    )
+        break;
+    else
+        userName = prompt(
+            "Please Enter valid name: \nThe name should have 5-20 characters, start with an alphabet and should not contain any special letter except . , _ and - ."
+        );
+}
+
+if (userName == null) userName = "";
 
 socket.emit("new-user", userName);
 
@@ -44,13 +60,13 @@ socket.on("new-user-connected", (data) => {
     userAlert(data, "connected");
 });
 
-socket.on("user-disconnected", (name) => {
+socket.on("user-disconnected", (data) => {
     userAlert(data, "dis-connected");
 });
 
-// socket.on("user-count-change", (num) => {
-//     numUsers.innerHTML = num;
-// });
+socket.on("user-count-change", (num) => {
+    numUsers.innerHTML = num;
+});
 
 function appendMessage(data, type = "left") {
     let messageElement = messageTemplate.cloneNode(true);
@@ -76,6 +92,7 @@ function appendMessage(data, type = "left") {
         container
             .querySelector(".message-container:last-child")
             .classList.add("right");
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 function userAlert(data, type = "connected") {
@@ -87,6 +104,7 @@ function userAlert(data, type = "connected") {
     alertElement.querySelector(".type").innerHTML = type;
     alertElement.querySelector("span:last-child").innerHTML = data.time;
     container.append(alertElement);
+    window.scrollTo(0, document.body.scrollHeight);
     // console.log(data);
 }
 
@@ -98,16 +116,20 @@ function userAlert(data, type = "connected") {
 //     else if (type === "left") messageElement.classList.add("announce");
 // }
 
-messageInput.addEventListener("keydown", (e) => {
-    if (e.key == "Enter" && prevKey != "Shift") sendContainer.requestSubmit();
-    prevKey = e.key;
-});
+messageInput.addEventListener("keyup", trackMultipleKeys);
+messageInput.addEventListener("keydown", trackMultipleKeys);
+
+function trackMultipleKeys(e) {
+    if (e.key == "Shift") shiftPressed = !shiftPressed;
+
+    if (e.key == "Enter" && !shiftPressed) sendContainer.requestSubmit();
+}
 
 submitBtn.addEventListener("click", () => sendContainer.requestSubmit());
 
 sendContainer.addEventListener("submit", (e) => {
     e.preventDefault();
-    const message = messageInput.value;
+    const message = messageInput.value.trim();
     if (message.length > 0) {
         // console.log(message);
         appendMessage(message, "right");
@@ -115,6 +137,8 @@ sendContainer.addEventListener("submit", (e) => {
         messageInput.value = "";
     }
 });
+
+sendContainer.addEventListener("click", () => messageInput.focus());
 
 messageInput.addEventListener("input", () => {
     messageInput.style.height = "auto";

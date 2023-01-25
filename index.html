@@ -10,15 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- <script defer src="https://basic-real-time-chat-app-production.up.railway.app/socket.io/socket.io.js"></script> -->
-    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="https://basic-real-time-chat-app-production.up.railway.app/socket.io/socket.io.js"></script>
+    <!-- <script defer src="http://localhost:3000/socket.io/socket.io.js"></script> -->
     <script defer src="script.js"></script>
 </head>
 
 <body>
-    <div class="num-users">0</div>
-    <div class="container">
-    </div>
+    <div class="num-users">Online Users: <span>0</span></div>
+    <div class="container"></div>
     <form id="send-container">
         <div class="message-input-wrapper">
             <textarea class="message-input" rows="1" autofocus maxlength="500" disabled></textarea>

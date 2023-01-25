@@ -17,7 +17,7 @@ const io = new Server(httpServer, {
 const users = {};
 
 io.on("connection", (socket) => {
-    const hue = Math.floor(Math.random() * 360);
+    const hue = getRandomColor();
     socket.on("new-user", (name) => {
         const avatar = createAvatar(botttsNeutral, {
             seed: socket.id,
@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
             backgroundColor: [`hsl(${hue}, 40%, 55%)`],
             backgroundType: ["solid"],
         });
+        if (!name) name = socket.id;
         let obj = {
             name: name,
             avatar: avatar.toString(),
@@ -33,7 +34,6 @@ io.on("connection", (socket) => {
         };
         users[socket.id] = obj;
         const currTime = get12Time();
-        // io.to(socket.id).emit("i-connected", obj);
         socket.emit("i-connected", obj);
         io.emit("user-count-change", Object.keys(users).length);
         io.emit("new-user-connected", {
@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         const currTime = get12Time();
         const user = users[socket.id];
+        if (!user) return;
         socket.broadcast.emit("user-disconnected", {
             name: user.name,
             color: user.color,
@@ -75,4 +76,15 @@ function get12Time(date = new Date()) {
     minutes = minutes < 10 ? "0" + minutes : minutes;
     var strTime = hours + ":" + minutes + " " + ampm;
     return strTime;
+}
+
+function getRandomColor() {
+    let rn = Math.floor(Math.random() * 360);
+    while (
+        Object.values(users).some((itm) => Math.abs(rn - itm.color) < 15) &&
+        Object.keys(users).length < 15
+    )
+        rn = Math.floor(Math.random() * 360);
+
+    return rn;
 }
