@@ -28,6 +28,7 @@ body {
 .container {
     width: 80%;
     max-width: 700px;
+    margin-bottom: 10vh;
 }
 
 /* message formatting */
@@ -49,7 +50,7 @@ body {
     gap: 7px;
 }
 
-.message-container .name {
+.message-container .message .name {
     border-radius: 2px;
     font-family: "Pacifico", cursive;
     padding: 0 16px;
@@ -57,7 +58,7 @@ body {
     color: white;
 }
 
-.message-container .time {
+.message-container .message .time {
     background-color: #2d2d2d;
     font-size: 12px;
     padding: 2px 5px;
@@ -66,8 +67,9 @@ body {
     font-family: sans-serif;
 }
 
-.message-container .message-body {
+.message-container .message .message-body {
     text-align: justify;
+    white-space: pre-line;
 }
 
 .message-container.right {
@@ -82,8 +84,20 @@ body {
     fill: var(--bg-color);
 }
 
-.message-container.right .name {
+.message-container.right .message .name {
     background-color: var(--your-color);
+}
+
+.message-container.alert {
+    flex-grow: 1;
+    justify-content: center;
+    display: block;
+    text-align: center;
+    color: #555;
+}
+
+.message-container.alert .name {
+    font-weight: bold;
 }
 
 #send-container {

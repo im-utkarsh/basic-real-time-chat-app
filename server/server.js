@@ -32,18 +32,31 @@ io.on("connection", (socket) => {
             color: hue,
         };
         users[socket.id] = obj;
-        io.to(socket.id).emit("user-connected", obj);
+        const currTime = get12Time();
+        // io.to(socket.id).emit("i-connected", obj);
+        socket.emit("i-connected", obj);
         io.emit("user-count-change", Object.keys(users).length);
+        io.emit("new-user-connected", {
+            name: name,
+            color: hue,
+            time: currTime,
+        });
     });
     socket.on("send-chat-message", (message) => {
         socket.broadcast.emit("chat-message", {
             message: message,
             user: users[socket.id],
-            time: get12Time(new Date()),
+            time: get12Time(),
         });
     });
     socket.on("disconnect", () => {
-        socket.broadcast.emit("user-disconnected", users[socket.id]);
+        const currTime = get12Time();
+        const user = users[socket.id];
+        socket.broadcast.emit("user-disconnected", {
+            name: user.name,
+            color: user.color,
+            time: currTime,
+        });
         delete users[socket.id];
         io.emit("user-count-change", Object.keys(users).length);
     });
@@ -53,20 +66,7 @@ httpServer.listen(port, () => {
     console.log(`Working on ${port}`);
 });
 
-function hslToHex(h, s, l) {
-    l /= 100;
-    const a = (s * Math.min(l, 1 - l)) / 100;
-    const f = (n) => {
-        const k = (n + h / 30) % 12;
-        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-        return Math.round(255 * color)
-            .toString(16)
-            .padStart(2, "0"); // convert to Hex and prefix "0" if needed
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function get12Time(date) {
+function get12Time(date = new Date()) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var ampm = hours >= 12 ? "PM" : "AM";
