@@ -9,7 +9,10 @@ const httpServer = createServer();
 
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://127.0.0.1:5500",
+        origins: [
+            "http://127.0.0.1:5500",
+            "https://im-utkarsh.github.io/basic-real-time-chat-app/",
+        ],
         methods: ["GET", "POST"],
     },
 });
