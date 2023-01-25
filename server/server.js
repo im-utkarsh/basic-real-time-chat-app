@@ -29,16 +29,17 @@ io.on("connection", (socket) => {
         let obj = {
             name: name,
             avatar: avatar.toString(),
-            color: `hsl(${hue}, 90%, 50%)`,
+            color: hue,
         };
-        users[socket.id] = { obj };
-        io.emit("user-connected", obj);
+        users[socket.id] = obj;
+        io.to(socket.id).emit("user-connected", obj);
         io.emit("user-count-change", Object.keys(users).length);
     });
     socket.on("send-chat-message", (message) => {
         socket.broadcast.emit("chat-message", {
             message: message,
-            name: users[socket.id],
+            user: users[socket.id],
+            time: get12Time(new Date()),
         });
     });
     socket.on("disconnect", () => {
@@ -51,3 +52,27 @@ io.on("connection", (socket) => {
 httpServer.listen(port, () => {
     console.log(`Working on ${port}`);
 });
+
+function hslToHex(h, s, l) {
+    l /= 100;
+    const a = (s * Math.min(l, 1 - l)) / 100;
+    const f = (n) => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color)
+            .toString(16)
+            .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function get12Time(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    var strTime = hours + ":" + minutes + " " + ampm;
+    return strTime;
+}

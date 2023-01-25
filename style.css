@@ -1,5 +1,6 @@
 :root {
     --your-color: rgb(242, 89, 13);
+    --bg-color: transparent;
 }
 
 body {
@@ -48,16 +49,15 @@ body {
     gap: 7px;
 }
 
-.message-container .message-head .name {
+.message-container .name {
     border-radius: 2px;
-    background-color: var(--your-color);
     font-family: "Pacifico", cursive;
     padding: 0 16px;
     line-height: 24px;
     color: white;
 }
 
-.message-container .message-head .time {
+.message-container .time {
     background-color: #2d2d2d;
     font-size: 12px;
     padding: 2px 5px;
@@ -76,6 +76,14 @@ body {
 
 .message-container.right .message-head {
     flex-flow: row-reverse;
+}
+
+.message-container.right svg {
+    fill: var(--bg-color);
+}
+
+.message-container.right .name {
+    background-color: var(--your-color);
 }
 
 #send-container {
