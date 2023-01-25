@@ -17,17 +17,22 @@ const io = new Server(httpServer, {
 const users = {};
 
 io.on("connection", (socket) => {
+    const hue = Math.floor(Math.random() * 360);
     socket.on("new-user", (name) => {
         const avatar = createAvatar(botttsNeutral, {
             seed: socket.id,
-            radius: 50,
-            size: 32,
-            backgroundType: ["gradientLinear", "solid"],
-            backgroundRotation: [0, 360],
+            radius: 10,
+            size: 50,
+            backgroundColor: [`hsl(${hue}, 40%, 55%)`],
+            backgroundType: ["solid"],
         });
-        let obj = { name: name, avatar: avatar.toString() };
+        let obj = {
+            name: name,
+            avatar: avatar.toString(),
+            color: `hsl(${hue}, 90%, 50%)`,
+        };
         users[socket.id] = { obj };
-        socket.broadcast.emit("user-connected", obj);
+        io.emit("user-connected", obj);
         io.emit("user-count-change", Object.keys(users).length);
     });
     socket.on("send-chat-message", (message) => {

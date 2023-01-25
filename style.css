@@ -1,3 +1,7 @@
+:root {
+    --your-color: rgb(242, 89, 13);
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -5,49 +9,138 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: #141414;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.1px;
+    color: #cfcfcf;
 }
 
 .num-users {
     color: wheat;
-    background-color: #000;
     padding: 5px 0;
     font-size: 1.5rem;
     width: 100%;
     text-align: center;
 }
 
-.message-container {
+.container {
     width: 80%;
-    max-width: 1200px;
+    max-width: 700px;
 }
 
-.message-container div {
-    background-color: #ccc;
-    padding: 5px;
+/* message formatting */
+.message-container {
+    margin-bottom: 10px;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #242424;
+    color: #cfcfcf;
+    display: flex;
+    position: relative;
+    gap: 10px;
 }
 
-.message-container div:nth-child(2n) {
-    background-color: #fff;
+.message-container .message-head {
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
-.message-container div.you {
-    text-align: right;
+.message-container .message-head .name {
+    border-radius: 2px;
+    background-color: var(--your-color);
+    font-family: "Pacifico", cursive;
+    padding: 0 16px;
+    line-height: 24px;
+    color: white;
 }
 
-.message-container div.announce {
-    text-align: center;
+.message-container .message-head .time {
+    background-color: #2d2d2d;
+    font-size: 12px;
+    padding: 2px 5px;
+    color: #888;
+    border-radius: 3px;
+    font-family: sans-serif;
+}
+
+.message-container .message-body {
+    text-align: justify;
+}
+
+.message-container.right {
+    flex-direction: row-reverse;
+}
+
+.message-container.right .message-head {
+    flex-flow: row-reverse;
 }
 
 #send-container {
     position: fixed;
-    padding-bottom: 30px;
-    bottom: 0;
-    background-color: white;
-    max-width: 1200px;
+    bottom: 20px;
+    min-height: 40px;
+    max-height: 100px;
     width: 80%;
+    max-width: 700px;
+    padding: 5px 10px;
+    background-color: #242424;
+    border-radius: 6px;
     display: flex;
+    align-items: center;
+    overflow: hidden;
 }
 
-#message-input {
-    flex-grow: 1;
+#send-container .message-input-wrapper {
+    width: 93%;
+    display: flex;
+    align-items: center;
+    max-height: inherit;
+    overflow: hidden;
+}
+
+#send-container .message-input {
+    padding: 0;
+    resize: none;
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    color: #cfcfcf;
+    max-height: inherit;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#send-container .message-input:focus-visible {
+    outline: none;
+}
+
+#send-container .message-input::-webkit-scrollbar {
+    display: none;
+}
+
+#send-container .btn {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, opacity 0.2s ease-out;
+    position: absolute;
+    right: 12px;
+}
+
+#send-container .btn img {
+    width: 14px;
+    height: 14px;
+    padding: 1px;
+}
+
+#send-container .btn:hover {
+    background-color: var(--your-color);
+    opacity: 0.7;
 }
