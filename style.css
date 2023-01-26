@@ -1,10 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Monoton&display=swap");
-
 :root {
-    --your-color: rgb(242, 89, 13);
+    --your-color: #666;
     --bg-color: transparent;
 }
 
+/* scroll properties */
 html {
     scroll-behavior: smooth;
     -ms-overflow-style: none;
@@ -29,14 +28,7 @@ body {
     color: #cfcfcf;
 }
 
-/* .num-users {
-    color: wheat;
-    padding: 5px 0;
-    font-size: 1.5rem;
-    width: 100%;
-    text-align: center;
-} */
-
+/* Number of users */
 .num-users {
     color: #fff;
     animation: flicker 1.5s infinite alternate;
@@ -44,6 +36,11 @@ body {
     font-size: 24px;
     align-self: end;
     font-family: "Monoton", cursive;
+    border: 3.5px solid #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 3.5px #fff, 0 0 3.5px #fff, 0 0 36px #5271ff,
+        0 0 14px #5271ff, 0 0 50px #5271ff, inset 0 0 23px #5271ff;
 }
 
 .container {
@@ -121,13 +118,14 @@ body {
     justify-content: center;
     display: block;
     text-align: center;
-    color: #555;
+    color: #696969;
 }
 
 .message-container.alert .name {
     font-weight: bold;
 }
 
+/* send area formatting */
 #send-container {
     position: fixed;
     bottom: 20px;
@@ -195,6 +193,7 @@ body {
     background-color: var(--bg-color);
 }
 
+/* animation for neon flicker */
 @keyframes flicker {
     0%,
     18%,
@@ -203,8 +202,9 @@ body {
     53%,
     57%,
     100% {
-        text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff, 0 0 40px #f09,
-            0 0 80px #f09, 0 0 90px #f09, 0 0 100px #f09, 0 0 150px #f09;
+        text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff,
+            0 0 40px #5271ff, 0 0 80px #5271ff, 0 0 90px #5271ff,
+            0 0 100px #5271ff, 0 0 150px #5271ff;
     }
     20%,
     24%,

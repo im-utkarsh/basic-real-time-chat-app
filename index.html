@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Chat-App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Montserrat&family=Pacifico&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script defer src="https://basic-real-time-chat-app-production.up.railway.app/socket.io/socket.io.js"></script>
     <!-- <script defer src="http://localhost:3000/socket.io/socket.io.js"></script> -->
@@ -16,30 +17,31 @@
 </head>
 
 <body>
+    <!-- online users -->
     <div class="num-users">Online Users: <span>0</span></div>
+    <!-- container for messages -->
     <div class="container"></div>
+    <!-- send message form -->
     <form id="send-container">
         <div class="message-input-wrapper">
             <textarea class="message-input" rows="1" autofocus maxlength="500" disabled></textarea>
         </div>
         <div class="btn submit"><img src="send-icon.png" alt="Send"></div>
     </form>
+    <!-- template for new message -->
     <template class="message-template">
         <div class="message-container">
-            <div class="avatar">
-
-            </div>
+            <div class="avatar"></div>
             <div class="message">
                 <div class="message-head">
                     <span class="name"></span>
                     <span class="time"></span>
                 </div>
-                <div class="message-body">
-
-                </div>
+                <div class="message-body"></div>
             </div>
         </div>
     </template>
+    <!-- template for user connected/disconnected alert -->
     <template class="alert-template">
         <div class="message-container alert">
             User <span class="name"></span> <span class="type">connected</span> at <span>08:42 PM</span>.

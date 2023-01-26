@@ -1,3 +1,4 @@
+// variables
 const socket = io("https://basic-real-time-chat-app-production.up.railway.app");
 // const socket = io("http://localhost:3000");
 const numUsers = document.querySelector(".num-users span");
@@ -14,6 +15,7 @@ let myAvatar;
 let myColor = null;
 let userName = prompt("Please enter your name:");
 
+// validate username
 while (true) {
     const re = /^[a-zA-Z]([a-zA-Z0-9]|([_\.-](?![_\.-])))+[a-zA-Z0-9]$/gm;
     if (
@@ -25,21 +27,19 @@ while (true) {
         break;
     else
         userName = prompt(
-            "Please Enter valid name: \nThe name should have 5-20 characters, start with an alphabet and should not contain any special letter except . , _ and - ."
+            `Please Enter valid name: 
+The name should have 5-20 characters, start with an alphabet and should not contain any special letter except . , _ and - .`
         );
 }
 
-if (userName == null) userName = "";
-
+// socket event handlers
+//
+// Send username to server whenever new user is connected
 socket.emit("new-user", userName);
 
-// appendMessage("You Joined", "middle");
-
+// show this message when success from server for this user connection
 socket.on("i-connected", (data) => {
-    // console.log(data);
     myAvatar = data.avatar;
-    // avatar.innerHTML = data.avatar;
-    // avatar.querySelector("svg").style.fill = `hsl(${data.color}, 40%, 55%)`;
     document.documentElement.style.setProperty(
         "--your-color",
         `hsl(${data.color}, 80%, 40%)`
@@ -48,85 +48,39 @@ socket.on("i-connected", (data) => {
         "--bg-color",
         `hsl(${data.color}, 40%, 55%)`
     );
-    // appendMessage(`${data.name} connected`, "middle");
-    messageInput.disabled = false;
+    messageInput.disabled = false; // message can't be send till connection confirmation from server
 });
 
-socket.on("chat-message", (data) => {
-    appendMessage(data, "left");
-});
-
+// when new user connected
 socket.on("new-user-connected", (data) => {
     userAlert(data, "connected");
 });
 
+// when new message received by user
+socket.on("chat-message", (data) => {
+    appendMessage(data, "left");
+});
+
+// when a user disconnected
 socket.on("user-disconnected", (data) => {
     userAlert(data, "dis-connected");
 });
 
+// when user count in server changes
 socket.on("user-count-change", (num) => {
     numUsers.innerHTML = num;
 });
 
-function appendMessage(data, type = "left") {
-    let messageElement = messageTemplate.cloneNode(true);
-    if (type == "left") {
-        messageElement.querySelector(".avatar").innerHTML = data.user.avatar;
-        messageElement.querySelector(
-            "svg"
-        ).style.fill = `hsl(${data.user.color}, 40%, 55%)`;
-        messageElement.querySelector(".name").innerHTML = data.user.name;
-        messageElement.querySelector(
-            ".name"
-        ).style.backgroundColor = `hsl(${data.user.color}, 80%, 40%)`;
-        messageElement.querySelector(".time").innerHTML = data.time;
-        messageElement.querySelector(".message-body").innerHTML = data.message;
-    } else {
-        messageElement.querySelector(".avatar").innerHTML = myAvatar;
-        messageElement.querySelector(".name").innerHTML = userName;
-        messageElement.querySelector(".message-body").innerHTML = data;
-        messageElement.querySelector(".time").innerHTML = get12Time(new Date());
-    }
-    container.append(messageElement);
-    if (type == "right")
-        container
-            .querySelector(".message-container:last-child")
-            .classList.add("right");
-    window.scrollTo(0, document.body.scrollHeight);
-}
+// Event Listeners
+//
+// For shift key functionality
+messageInput.addEventListener("keyup", trackShiftKey);
+messageInput.addEventListener("keydown", trackShiftKey);
 
-function userAlert(data, type = "connected") {
-    let alertElement = alertTemplate.cloneNode(true);
-    alertElement.querySelector(".name").innerHTML = data.name;
-    alertElement.querySelector(
-        ".name"
-    ).style.color = `hsl(${data.color}, 75%, 35%)`;
-    alertElement.querySelector(".type").innerHTML = type;
-    alertElement.querySelector("span:last-child").innerHTML = data.time;
-    container.append(alertElement);
-    window.scrollTo(0, document.body.scrollHeight);
-    // console.log(data);
-}
-
-// function appendMessage(data, type = "left") {
-//     const messageElement = document.createElement("div");
-//     messageElement.innerHTML = data;
-//     messageContainer.append(messageElement);
-//     if (type === "right") messageElement.classList.add("you");
-//     else if (type === "left") messageElement.classList.add("announce");
-// }
-
-messageInput.addEventListener("keyup", trackMultipleKeys);
-messageInput.addEventListener("keydown", trackMultipleKeys);
-
-function trackMultipleKeys(e) {
-    if (e.key == "Shift") shiftPressed = !shiftPressed;
-
-    if (e.key == "Enter" && !shiftPressed) sendContainer.requestSubmit();
-}
-
+// submit message when clicked
 submitBtn.addEventListener("click", () => sendContainer.requestSubmit());
 
+// send message when submit
 sendContainer.addEventListener("submit", (e) => {
     e.preventDefault();
     const message = messageInput.value.trim();
@@ -138,8 +92,10 @@ sendContainer.addEventListener("submit", (e) => {
     }
 });
 
+// focus on input when clicked on message form
 sendContainer.addEventListener("click", () => messageInput.focus());
 
+// adjust height when input on text-area
 messageInput.addEventListener("input", () => {
     messageInput.style.height = "auto";
     messageInput.style.height = messageInput.scrollHeight + "px";
@@ -149,7 +105,61 @@ messageInput.addEventListener("input", () => {
     }
 });
 
-function get12Time(date) {
+// Functions
+//
+// function to append message to chat
+function appendMessage(data, type = "left") {
+    let messageElement = messageTemplate.cloneNode(true);
+    if (type == "left") {
+        messageElement.querySelector(".avatar").innerHTML = data.user.avatar;
+        messageElement.querySelector(
+            "svg"
+        ).style.fill = `hsl(${data.user.color}, 40%, 55%)`;
+        messageElement.querySelector(".name").innerHTML = data.user.name;
+        messageElement.querySelector(
+            ".name"
+        ).style.backgroundColor = `hsl(${data.user.color}, 80%, 40%)`;
+        messageElement.querySelector(".time").innerHTML = get12Time(data.time);
+        messageElement.querySelector(".message-body").innerHTML = data.message;
+    } else {
+        messageElement.querySelector(".avatar").innerHTML = myAvatar;
+        messageElement.querySelector(".name").innerHTML = userName;
+        messageElement.querySelector(".message-body").innerHTML = data;
+        messageElement.querySelector(".time").innerHTML = get12Time();
+    }
+    container.append(messageElement);
+    if (type == "right")
+        container
+            .querySelector(".message-container:last-child")
+            .classList.add("right");
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+// function to append user connected/disconnected alert to chat
+function userAlert(data, type = "connected") {
+    let alertElement = alertTemplate.cloneNode(true);
+    alertElement.querySelector(".name").innerHTML = data.name;
+    alertElement.querySelector(
+        ".name"
+    ).style.color = `hsl(${data.color}, 80%, 42%)`;
+    alertElement.querySelector(".type").innerHTML = type;
+    alertElement.querySelector("span:last-child").innerHTML = get12Time(
+        data.time
+    );
+    container.append(alertElement);
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+// Shift+Enter function for adding newline
+function trackShiftKey(e) {
+    if (e.key == "Shift") shiftPressed = !shiftPressed;
+
+    if (e.key == "Enter" && !shiftPressed) sendContainer.requestSubmit();
+}
+
+// function to convert time to 12-hour format
+function get12Time(dt = null) {
+    const date = new Date(dt);
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var ampm = hours >= 12 ? "PM" : "AM";

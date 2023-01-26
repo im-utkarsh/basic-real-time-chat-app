@@ -3,10 +3,12 @@ import { botttsNeutral } from "@dicebear/collection";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+// take port from environment variables (for deployment), if not set port 3000
 const port = process.env.PORT || 3000;
 
 const httpServer = createServer();
 
+// socket on given server, with cros
 const io = new Server(httpServer, {
     cors: {
         origins: [
@@ -17,11 +19,18 @@ const io = new Server(httpServer, {
     },
 });
 
+// store users
 const users = {};
 
+// Socket event handlers
+//
+// when new connection
 io.on("connection", (socket) => {
+    // get random color
     const hue = getRandomColor();
+    // when new user connected
     socket.on("new-user", (name) => {
+        // create avatar
         const avatar = createAvatar(botttsNeutral, {
             seed: socket.id,
             radius: 10,
@@ -29,6 +38,7 @@ io.on("connection", (socket) => {
             backgroundColor: [`hsl(${hue}, 40%, 55%)`],
             backgroundType: ["solid"],
         });
+        // if name not send, set same to socket id
         if (!name) name = socket.id;
         let obj = {
             name: name,
@@ -36,32 +46,41 @@ io.on("connection", (socket) => {
             color: hue,
         };
         users[socket.id] = obj;
-        const currTime = get12Time();
+        const currTime = new Date().toISOString();
+        // send data to this user only
         socket.emit("i-connected", obj);
-        io.emit("user-count-change", Object.keys(users).length);
+        // send alert to all users
         io.emit("new-user-connected", {
             name: name,
             color: hue,
             time: currTime,
         });
+        // send updated user count to all users
+        io.emit("user-count-change", Object.keys(users).length);
     });
+    // when new message received
     socket.on("send-chat-message", (message) => {
+        // send message to all except this user
         socket.broadcast.emit("chat-message", {
             message: message,
             user: users[socket.id],
-            time: get12Time(),
+            time: new Date().toISOString(),
         });
     });
+    // when user dicsonnected
     socket.on("disconnect", () => {
-        const currTime = get12Time();
+        const currTime = new Date().toISOString();
         const user = users[socket.id];
+        // if id not present, skip
         if (!user) return;
+        // send alert to all except this user
         socket.broadcast.emit("user-disconnected", {
             name: user.name,
             color: user.color,
             time: currTime,
         });
         delete users[socket.id];
+        // send upsated user count to all users
         io.emit("user-count-change", Object.keys(users).length);
     });
 });
@@ -70,17 +89,9 @@ httpServer.listen(port, () => {
     console.log(`Working on ${port}`);
 });
 
-function get12Time(date = new Date()) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    var strTime = hours + ":" + minutes + " " + ampm;
-    return strTime;
-}
-
+// Functions
+//
+// function to get random color
 function getRandomColor() {
     let rn = Math.floor(Math.random() * 360);
     while (
