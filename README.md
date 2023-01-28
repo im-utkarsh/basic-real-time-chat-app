@@ -1,4 +1,4 @@
-# Real-Time Chat 💬 App
+# 💬 Real-Time Chat App
 A real time chat app with single global room where anyone can connect and chat. Current online users are also shown on the top right corner.  
 The app is build using [socket.io](https://socket.io/) library.  
 
