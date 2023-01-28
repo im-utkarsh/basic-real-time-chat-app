@@ -152,7 +152,11 @@ function userAlert(data, type = "connected") {
 
 // Shift+Enter function for adding newline
 function trackShiftKey(e) {
-    if (e.key == "Shift") shiftPressed = !shiftPressed;
+    console.log(e);
+    if (e.key == "Shift") {
+        if (e.type == "keydown") shiftPressed = true;
+        else shiftPressed = false;
+    }
 
     if (e.key == "Enter" && !shiftPressed) sendContainer.requestSubmit();
 }
